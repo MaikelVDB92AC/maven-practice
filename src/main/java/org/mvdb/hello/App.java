@@ -3,10 +3,10 @@ import org.apache.logging.log4j.*;
 
 public class App
 {
-    private static Logger logger = LogManager.getLogger();
+    // private static Logger logger = LogManager.getLogger();
 
     public String sayHello() {
-        logger.debug("Somebody called sayHello()");
+       // logger.debug("Somebody called sayHello()");
         return "Hello World";
     }
     public static void main(String[] args){

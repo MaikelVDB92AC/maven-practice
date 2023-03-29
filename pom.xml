@@ -25,15 +25,29 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <log.level>DEBUG</log.level> <!-- target/classes folder -->
 
     <!-- Versions -->
-    <log4j.version>2.11.2</log4j.version>
-    <junit.version>3.8.1</junit.version>
-    <mvncompiler.version>3.1</mvncompiler.version>
+    <log4j.version>2.20.0</log4j.version>
+    <junit.version>4.13.2</junit.version>
+    <mvncompiler.version>3.8.0</mvncompiler.version>
     <mvnsite.version>3.3</mvnsite.version>
+    <javadoc.version>3.5.0</javadoc.version>
+    <reports.version>2.9</reports.version>
+    <log4japi.version>2.17.1</log4japi.version>
+    <!-- <file.name>Maven Practice</file.name>  -> kan ook gebruikt worden als property -->
   </properties>
 
   <build>
+    <!-- Final name -->
+    <finalName>${project.artifactId}_${env.USERNAME}</finalName> <!-- JAR.file name -->
+    <!-- Resources -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <!-- Plugins -->
     <plugins>
       <!-- Maven plugins -->
@@ -50,11 +64,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>${javadoc.version}</version>
         <executions>
           <execution>
             <goals>
-              <goal>javadoc</goal>
+              <goal>javadoc</goal> <!-- Hierdoor wordt de javadoc altijd aangemaakt bij mvn package -->
             </goals>
             <phase>package</phase>
           </execution>
@@ -63,21 +77,50 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.9</version>
+        <version>${reports.version}</version>
+      </plugin>
+
+      <!-- Uitvoerbare JAR-file -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <outputDirectory>
+            ${project.build.directory}/lib
+          </outputDirectory>
+          <archive>
+            <manifest>
+              <mainClass>org.mvdb.hello.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.2</version>
+        <configuration>
+          <outputDirectory>
+            ${project.build.directory}/lib
+          </outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
 
   <!-- Dependencies -->
   <dependencies>
-    <!-- junit -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <!-- Apache logger -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -85,10 +128,18 @@
       <version>${log4j.version}</version>
       <scope>compile</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-1.2-api -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+      <version>${log4japi.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- junit -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.2</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
