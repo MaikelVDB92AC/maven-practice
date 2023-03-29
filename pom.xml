@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.example</groupId>
+  <groupId>org.mvdb.hello</groupId>
   <artifactId>maven-practice</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <modules>
+    <module>testmodule</module>
+    <module>app</module>
+  </modules>
 
   <name>maven-practice</name>
   <url>http://maven.apache.org</url>
+  <packaging>pom</packaging>
 
   <!-- Repository -->
+  <!-- <distributionManagement> -->
   <repositories>
     <repository>
       <id>mvdb</id>
       <url>https://github.com/MaikelVDB92AC/maven-practice.git</url>
     </repository>
   </repositories>
+  <!-- </distributionManagement>- -->
 
   <!-- Properties -->
   <properties>
@@ -34,9 +42,24 @@
     <mvnsite.version>3.3</mvnsite.version>
     <javadoc.version>3.5.0</javadoc.version>
     <reports.version>2.9</reports.version>
-    <log4japi.version>2.17.1</log4japi.version>
+    <log4japi.version>2.20.0</log4japi.version>
+    <jarplugin.version>3.2.0</jarplugin.version>
+    <jarsource.version>3.2.0</jarsource.version>
     <!-- <file.name>Maven Practice</file.name>  -> kan ook gebruikt worden als property -->
   </properties>
+
+  <!-- Profiles -->
+  <profiles>
+    <profile>
+      <id>PROD</id>
+      <properties>
+        <log.level>WARN</log.level>
+        <name>Production</name>
+        <maven.compiler.debug>false</maven.compiler.debug>
+        <maven.compiler.optimize>true</maven.compiler.optimize>
+      </properties>
+    </profile>
+  </profiles>
 
   <build>
     <!-- Final name -->
@@ -44,7 +67,7 @@
     <!-- Resources -->
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
+        <directory>app/src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
     </resources>
@@ -72,6 +95,13 @@
             </goals>
             <phase>package</phase>
           </execution>
+          <execution>
+            <id>create-javadoc-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -79,12 +109,26 @@
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>${reports.version}</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${jarsource.version}</version>
+        <executions>
+          <execution>
+            <id>create-project-bundler</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <!-- Uitvoerbare JAR-file -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>${jarplugin.version}</version>
         <configuration>
           <outputDirectory>
             ${project.build.directory}/lib
